@@ -1,6 +1,6 @@
 {
   "name": "srimmer",
-  "version": "0.0.0",
+  "version": "0.0.1",
   "description": "immer react bindings.",
   "main": "lib/index.js",
   "module": "lib/esm/index.js",
