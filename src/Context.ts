@@ -23,7 +23,12 @@ export type BitState = {
  */
 export class Context<State> {
   /**
-   * update state function(Provider#setState).
+   * get state function(Provider#getState).
+   */
+  public getState?: () => State;
+
+  /**
+   * update state function(Provider#updateState).
    */
   public updateState?: (mutate: Mutate<State>) => void;
 
