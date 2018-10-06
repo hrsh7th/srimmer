@@ -1,6 +1,6 @@
-import React from 'react';
-import { produce, Draft } from 'immer';
-import { Context } from './Context';
+import React from "react";
+import { produce } from "immer";
+import { Context, Mutate } from "./Context";
 
 export type ProviderProps<State> = {
   state: State;
@@ -18,7 +18,10 @@ export function createProvider<State>(
   /**
    * SrimmerProvider.
    */
-  return class SrimmerProvider extends React.Component<ProviderProps<State>, ProviderState<State>> {
+  return class SrimmerProvider extends React.Component<
+    ProviderProps<State>,
+    ProviderState<State>
+  > {
     /**
      * props to state.
      */
@@ -40,14 +43,12 @@ export function createProvider<State>(
     /**
      * state updator.
      */
-    public updateState = (mutator: (state: Draft<State>) => void) => {
+    public updateState = (mutator: Mutate<State>) => {
       this.setState({
         state: produce<State>(this.state.state, function() {
-          mutator(this as Draft<State>);
+          mutator(this as State);
         })
       });
     };
-  }
-
-};
-
+  };
+}

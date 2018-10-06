@@ -8,7 +8,8 @@ const state = {
   },
   consumer2: {
     value: 0
-  }
+  },
+  array: [{ name: 1 }, { name: 2 }]
 };
 type State = typeof state;
 
@@ -25,7 +26,7 @@ test("Should re-rendering only part of consumers.", () => {
           <div>
             consumer1-
             {state.value}
-            {(count1++)}
+            {count1++}
           </div>
         )}
       </Consumer1>
@@ -34,15 +35,19 @@ test("Should re-rendering only part of consumers.", () => {
           <div>
             consumer2-
             {state.value}
-            {(count2++)}
+            {count2++}
           </div>
         )}
       </Consumer2>
     </Provider>
   );
-  update(state => state.consumer1.value = state.consumer1.value + 1);
+  update(state => (state.consumer1.value = state.consumer1.value + 1));
   expect(component.toJSON()).toMatchSnapshot();
-  update(state => state.consumer2.value = state.consumer2.value + 1);
+  update(state => (state.consumer2.value = state.consumer2.value + 1));
   expect(component.toJSON()).toMatchSnapshot();
-});
+  update(state => removeArray(state.array));
 
+  function removeArray(names: State["array"]) {
+    names.pop();
+  }
+});

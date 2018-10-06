@@ -2,7 +2,7 @@
   "name": "srimmer",
   "version": "0.0.1",
   "description": "immer react bindings.",
-  "main": "lib/index.js",
+  "main": "lib/cjs/index.js",
   "module": "lib/esm/index.js",
   "types": "lib/esm/index.d.ts",
   "scripts": {

@@ -1,10 +1,9 @@
-import * as equals from 'shallowequal';
-import { Draft } from 'immer';
+import * as equals from "shallowequal";
 
 /**
  * Mutate function.
  */
-export type Mutate<State> = (state: Draft<State>) => void;
+export type Mutate<State> = (state: State) => void;
 
 /**
  * Select function.
@@ -23,7 +22,6 @@ export type BitState = {
  * Context.
  */
 export class Context<State> {
-
   /**
    * update state function(Provider#setState).
    */
@@ -38,12 +36,14 @@ export class Context<State> {
    * calculate bitmask.
    */
   public calculateBitmask(nextState: State) {
-    return Array.from(this.bitmask.entries())
-      .reduce((bits, [select, bitState]) => {
+    return Array.from(this.bitmask.entries()).reduce(
+      (bits, [select, bitState]) => {
         return equals.default(select(nextState), bitState.state)
           ? bits
           : bits | bitState.bit;
-      }, 0);
+      },
+      0
+    );
   }
 
   /**
@@ -61,6 +61,4 @@ export class Context<State> {
   public getBitState(select: (state: State) => any) {
     return this.bitmask.get(select)!;
   }
-
 }
-
