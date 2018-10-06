@@ -1,48 +1,48 @@
 # srimmer.
+
 Srimmer provides simple api to use react and immer.
 
 inspired `react-copy-write`.
 
+I love immer and react-copy-write.
+
 # usage.
 
-## entrypoint
+## state
+
 ```typescript
-import React from 'react';
-import ReactDOM from 'react-dom';
 import { define } from 'srimmer';
 
-type Todo = {
-  id: number;
-  name: string;
-  status: string;
-};
+export type State = { ... };
 
-type State = {
-  todos: Todo[];
-};
-
-const {
+export const {
   Provider,
   Consumer,
-  update
+  create,
+  update,
+  get
 } = define<State>();
-
-export {
-  Provider,
-  Consumer,
-  update
-};
-
-ReactDOM.render((
-  <Provider state={createInitialState()}>
-    <App />
-  </Provider>
-), document.getElementById('app')!);
 ```
 
-## component
+## entrypoint
+
 ```typescript
-import { create } from './path/to/entrypoint';
+import React from "react";
+import ReactDOM from "react-dom";
+import { Provider } from "./state";
+
+ReactDOM.render(
+  <Provider state={createInitialState()}>
+    <App />
+  </Provider>,
+  document.getElementById("app")!
+);
+```
+
+## Consumer(with TypeScript type inference api).
+
+```typescript
+import { create } from './state';
 
 const Consumer = create(state => {
   return {
@@ -61,7 +61,30 @@ export default (props: { ... }) => (
 );
 ```
 
-# todo
-- Refactoring.
-- Remove create api if improved typescript inference.
+## Consumer(default api).
 
+```typescript
+import { Consumer, State } from './state';
+
+const select = (state: State) => {
+  return {...};
+};
+
+export default (props: { ... }) => (
+  <Consumer<ReturnType<typeof select>> select={select}>
+    {state => (
+      ...
+    )}
+  </Consumer>
+);
+```
+
+# note
+
+- If you use typescript, you should `create` api for type inference.
+- This library based on React.Context API.
+  - Supported unstable_observedBits.
+
+# todo
+
+- Refactoring.
