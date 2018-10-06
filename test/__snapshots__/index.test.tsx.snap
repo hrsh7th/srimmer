@@ -1,0 +1,31 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Should re-rendering only part of consumers. 1`] = `
+Array [
+  <div>
+    consumer1-
+    1
+    1
+  </div>,
+  <div>
+    consumer2-
+    0
+    0
+  </div>,
+]
+`;
+
+exports[`Should re-rendering only part of consumers. 2`] = `
+Array [
+  <div>
+    consumer1-
+    1
+    1
+  </div>,
+  <div>
+    consumer2-
+    1
+    1
+  </div>,
+]
+`;

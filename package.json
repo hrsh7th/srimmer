@@ -1,0 +1,69 @@
+{
+  "name": "srimmer",
+  "version": "0.0.0",
+  "description": "immer react bindings.",
+  "main": "lib/index.js",
+  "module": "lib/esm/index.js",
+  "types": "lib/esm/index.d.ts",
+  "scripts": {
+    "build": "rimraf lib/**/*.{js,map} && tsc -p ./tsconfig.esm.json && tsc -p ./tsconfig.cjs.json",
+    "test": "jest",
+    "pretty-quick": "pretty-quick",
+    "precommit": "pretty-quick --staged",
+    "postcommit": "git reset",
+    "release": "npm run build && np"
+  },
+  "author": "hrsh7th",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/hrsh7th/srimmer.git"
+  },
+  "keywords": [
+    "react",
+    "immer"
+  ],
+  "files": [
+    "lib"
+  ],
+  "jest": {
+    "testEnvironment": "node",
+    "moduleFileExtensions": [
+      "ts",
+      "tsx",
+      "js"
+    ],
+    "transform": {
+      "^.+\\.(ts|tsx)$": "ts-jest"
+    },
+    "globals": {
+      "ts-jest": {
+        "tsConfig": "tsconfig.json"
+      }
+    },
+    "testMatch": [
+      "<rootDir>/test/**/*.test.+(ts|tsx|js)"
+    ]
+  },
+  "dependencies": {
+    "immer": "^1.7.2",
+    "shallowequal": "^1.1.0"
+  },
+  "devDependencies": {
+    "@types/jest": "^23.3.3",
+    "@types/react": "^16.4.15",
+    "@types/react-dom": "^16.0.8",
+    "@types/react-test-renderer": "^16.0.3",
+    "@types/shallowequal": "^0.2.3",
+    "husky": "^1.1.1",
+    "jest": "^23.6.0",
+    "np": "^3.0.4",
+    "prettier": "^1.14.3",
+    "pretty-quick": "^1.7.0",
+    "react": "^16.5.2",
+    "react-dom": "^16.5.2",
+    "react-test-renderer": "^16.5.2",
+    "ts-jest": "^23.10.3",
+    "typescript": "^3.1.1"
+  }
+}
