@@ -1,5 +1,5 @@
 import React from "react";
-import { Context, Mutate, Select } from "./Context";
+import { Context, Update, Select } from "./Context";
 import { createConsumer } from "./Consumer";
 import { createProvider } from "./Provider";
 
@@ -13,22 +13,22 @@ export function define<State extends object>() {
   const SrimmerConsumer = createConsumer<State>(Consumer, context);
 
   return {
-    Provider: SrimmerProvider as any,
-    Consumer: SrimmerConsumer as any,
+    Provider: SrimmerProvider,
+
+    Consumer: SrimmerConsumer,
+
     get: () => {
-      return context.getState ? context.getState() : null;
+      return context.getState && context.getState();
     },
-    update: (mutator: Mutate<State>) => {
-      if (context.updateState) {
-        context.updateState(mutator);
-      }
-    },
-    create: function create<T>(select: Select<State, T>) {
-      return (props: {
-        children: (s: ReturnType<typeof select>) => React.ReactNode;
-      }) => (
+
+    select: function select<T>(select: Select<State, T>) {
+      return (props: { children: (s: T) => React.ReactNode }) => (
         <SrimmerConsumer<T> select={select}>{props.children}</SrimmerConsumer>
       );
+    },
+
+    update: (update: Update<State>) => {
+      context.updateState && context.updateState(update);
     }
   };
 }

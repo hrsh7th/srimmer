@@ -1,14 +1,14 @@
-# srimmer.
+# Srimmer
 
-Srimmer provides simple api to use react and immer.
+Srimmer provides simple api to use react, immer and TypeScript.
 
 inspired `react-copy-write`.
 
-I love immer and react-copy-write.
+I love react, immer, react-copy-write and TypeScript.
 
-# usage.
+# Usage
 
-## state
+## State
 
 ```typescript
 import { define } from 'srimmer';
@@ -18,13 +18,13 @@ export type State = { ... };
 export const {
   Provider,
   Consumer,
-  create,
+  select,
   update,
   get
 } = define<State>();
 ```
 
-## entrypoint
+## Provider
 
 ```typescript
 import React from "react";
@@ -37,54 +37,47 @@ ReactDOM.render(
   </Provider>,
   document.getElementById("app")!
 );
+
+function createInitialState() {
+  return JSON.stringify(document.getElementById("app")!.getAttribute("data"));
+}
 ```
 
-## Consumer(with TypeScript type inference api).
+## Consumer
 
 ```typescript
-import { create } from './state';
+import { select, update } from './state';
 
-const Consumer = create(state => {
-  return {
-    todos: state.todos
-  };
-});
+const Consumer = select(state => ({
+  todos: state.todos
+}));
 
-export default (props: { ... }) => (
+export default () => (
   <Consumer>
     {state => (
+      <button onClick={onAddButtonClick}>add</button>
       {state.todos.map(todo => (
-        <div key={todo.id}>{todo.name} - {todo.status}</div>
+        <div key={todo.id}> update(state => state.value++)}>{todo.name} - {todo.status}</div>
       ))}
     )}
   </Consumer>
 );
-```
 
-## Consumer(default api).
-
-```typescript
-import { Consumer, State } from './state';
-
-const select = (state: State) => {
-  return {...};
+const onAddButtonClick = () => {
+  update(state => {
+    state.todos.push({
+      name: 'new todo',
+      status: 'todo'
+    });
+  });
 };
-
-export default (props: { ... }) => (
-  <Consumer<ReturnType<typeof select>> select={select}>
-    {state => (
-      ...
-    )}
-  </Consumer>
-);
 ```
 
-# note
+# Note
 
-- If you use typescript, you should `create` api for type inference.
 - This library based on React.Context API.
   - Supported unstable_observedBits.
 
-# todo
+# ToDo
 
 - Refactoring.

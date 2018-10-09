@@ -3,7 +3,7 @@ import * as equals from "shallowequal";
 /**
  * Mutate function.
  */
-export type Mutate<State> = (state: State) => void;
+export type Update<State> = (state: State) => void;
 
 /**
  * Select function.
@@ -30,7 +30,7 @@ export class Context<State> {
   /**
    * update state function(Provider#updateState).
    */
-  public updateState?: (mutate: Mutate<State>) => void;
+  public updateState?: (update: Update<State>) => void;
 
   /**
    * Consumer's select props as bitmask.

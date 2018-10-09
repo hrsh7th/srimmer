@@ -1,5 +1,5 @@
-import React from 'react';
-import { Context, Select } from './Context';
+import React from "react";
+import { Context, Select } from "./Context";
 
 export type ConsumerProps<State, T = any> = {
   select: Select<State, T>;
@@ -17,7 +17,10 @@ export function createConsumer<State>(
   /**
    * SrimerConsumer.
    */
-  return class SrimmerConsumer<T> extends React.Component<ConsumerProps<State, T>, ConsumerState> {
+  return class SrimmerConsumer<T> extends React.Component<
+    ConsumerProps<State, T>,
+    ConsumerState
+  > {
     /**
      * initialize bitmask.
      */
@@ -31,13 +34,12 @@ export function createConsumer<State>(
      */
     public render() {
       const { select, children } = this.props;
-      const bit = context.getBitState(select);
+      const bitState = context.getBitState(select);
       return (
-        <Consumer unstable_observedBits={bit.bit}>
-          {state => children(bit.state = select(state))}
+        <Consumer unstable_observedBits={bitState.bit}>
+          {state => children((bitState.state = select(state)))}
         </Consumer>
       );
     }
-  }
-};
-
+  };
+}

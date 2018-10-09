@@ -1,6 +1,6 @@
 import React from "react";
 import { produce } from "immer";
-import { Context, Mutate } from "./Context";
+import { Context, Update } from "./Context";
 
 export type ProviderProps<State> = {
   state: State;
@@ -51,10 +51,10 @@ export function createProvider<State>(
     /**
      * state updator.
      */
-    public updateState = (mutator: Mutate<State>) => {
+    public updateState = (update: Update<State>) => {
       this.setState({
-        state: produce<State>(this.state.state, function() {
-          mutator(this as State);
+        state: produce<State>(this.state.state, function(state) {
+          update(state as State);
         })
       });
     };

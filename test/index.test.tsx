@@ -1,5 +1,5 @@
 import * as React from "react";
-import { create as render } from "react-test-renderer";
+import { create } from "react-test-renderer";
 import { define } from "../src";
 
 const state = {
@@ -14,12 +14,12 @@ const state = {
 type State = typeof state;
 
 test("Should re-rendering only part of consumers.", () => {
-  const { Provider, update, create } = define<State>();
+  const { Provider, update, select } = define<State>();
   let count1 = 0;
   let count2 = 0;
-  const Consumer1 = create(state => state.consumer1);
-  const Consumer2 = create(state => state.consumer2);
-  const component = render(
+  const Consumer1 = select(state => state.consumer1);
+  const Consumer2 = select(state => state.consumer2);
+  const component = create(
     <Provider state={state}>
       <Consumer1>
         {state => (
