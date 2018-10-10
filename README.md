@@ -6,9 +6,45 @@ inspired `react-copy-write`.
 
 I love react, immer, react-copy-write and TypeScript.
 
+# API
+
+```typescript
+import { define } from 'srimmer';
+
+type State = { ... };
+
+const {
+
+  /**
+   * State provider.
+   * @type {React.ComponentType<{ state: State; }>}
+   */
+  Provider,
+
+  /**
+   * State updator.
+   * @type {(updator: (state: State) => void) => void}
+   */
+  update,
+
+  /**
+   * State selector.
+   * @type {(select: <T>(state: State) => T) => Consumer<T>}
+   */
+  select,
+
+  /**
+   * State getter.
+   * @type {() => State}
+   */
+  get
+
+} = define<State>();
+```
+
 # Usage
 
-## State
+## define your state
 
 ```typescript
 import { define } from 'srimmer';
@@ -24,7 +60,7 @@ export const {
 } = define<State>();
 ```
 
-## Provider
+## bootstrap
 
 ```typescript
 import React from "react";
@@ -43,7 +79,7 @@ function createInitialState() {
 }
 ```
 
-## Consumer
+## consume state with selecter everywhere
 
 ```typescript
 import { select, update } from './state';
@@ -73,11 +109,17 @@ const onAddButtonClick = () => {
 };
 ```
 
-# Note
+# Recommended Structure
 
-- This library based on React.Context API.
-  - Supported unstable_observedBits.
+```bash
+/src
+  /state      # State schemas and querying utility functions.
+    index.ts
+  /action     # State updators.
+    index.ts
+  /component  # State selectors.
+    index.tsx
+  index.tsx   # Bootstrap.
+```
 
-# ToDo
-
-- Refactoring.
+See `hrsh7th/ganttcharty`.

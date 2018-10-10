@@ -6,10 +6,6 @@ export type ConsumerProps<State, T = any> = {
   children: (selected: T) => React.ReactNode;
 };
 
-export type ConsumerState = {
-  bit: number;
-};
-
 export function createConsumer<State>(
   Consumer: React.Consumer<State>,
   context: Context<State>
@@ -18,8 +14,7 @@ export function createConsumer<State>(
    * SrimerConsumer.
    */
   return class SrimmerConsumer<T> extends React.Component<
-    ConsumerProps<State, T>,
-    ConsumerState
+    ConsumerProps<State, T>
   > {
     /**
      * initialize bitmask.
@@ -33,13 +28,36 @@ export function createConsumer<State>(
      * rednder.
      */
     public render() {
-      const { select, children } = this.props;
-      const bitState = context.getBitState(select);
-      return (
-        <Consumer unstable_observedBits={bitState.bit}>
-          {state => children((bitState.state = select(state)))}
-        </Consumer>
-      );
+      return <Consumer>{this.select}</Consumer>;
     }
+
+    /**
+     * select and versioning.
+     */
+    public select = (state: State) => {
+      const bitState = context.getBitState(this.props.select);
+      bitState.state = bitState.state || this.props.select(state);
+      return (
+        <Versioning version={bitState.version}>
+          {() => this.props.children(bitState.state)}
+        </Versioning>
+      );
+    };
   };
+}
+
+/**
+ * Versioning selected state to avoid re-rendering.
+ */
+class Versioning extends React.Component<{
+  version: number;
+  children: () => React.ReactNode;
+}> {
+  public shouldComponentUpdate(props: { version: number }) {
+    return this.props.version !== props.version;
+  }
+
+  public render() {
+    return this.props.children();
+  }
 }

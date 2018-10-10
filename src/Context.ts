@@ -15,6 +15,7 @@ export type Select<State, T = any> = (state: State) => T;
  */
 export type BitState = {
   bit: number;
+  version: number;
   state?: any;
 };
 
@@ -43,9 +44,14 @@ export class Context<State> {
   public calculateBitmask(nextState: State) {
     return Array.from(this.bitmask.entries()).reduce(
       (bits, [select, bitState]) => {
-        return equals.default(select(nextState), bitState.state)
-          ? bits
-          : bits | bitState.bit;
+        const next = select(nextState);
+        const isSame = equals.default(next, bitState.state);
+        if (!isSame) {
+          bitState.state = next;
+          bitState.version++;
+          return bits | bitState.bit;
+        }
+        return bits;
       },
       0
     );
@@ -56,7 +62,8 @@ export class Context<State> {
    */
   public register(select: Select<State>) {
     this.bitmask.set(select, {
-      bit: this.bitmask.size + 1
+      bit: this.bitmask.size + 1,
+      version: 1
     });
   }
 
