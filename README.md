@@ -4,8 +4,6 @@ Srimmer provides simple api to use react, immer and TypeScript.
 
 inspired `react-copy-write`.
 
-I love react, immer, react-copy-write and TypeScript.
-
 # API
 
 ```typescript
@@ -53,7 +51,6 @@ export type State = { ... };
 
 export const {
   Provider,
-  Consumer,
   select,
   update,
   get
@@ -93,7 +90,7 @@ export default () => (
     {state => (
       <button onClick={onAddButtonClick}>add</button>
       {state.todos.map(todo => (
-        <div key={todo.id}> update(state => state.value++)}>{todo.name} - {todo.status}</div>
+        <div key={todo.id}>{todo.name} - {todo.status}</div>
       ))}
     )}
   </Consumer>
