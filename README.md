@@ -33,6 +33,7 @@ const {
 
   /**
    * State getter.
+   * Note: Carefully. It makes implicit depends to state values.
    * @type {() => State}
    */
   get
