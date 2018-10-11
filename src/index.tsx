@@ -3,6 +3,14 @@ import { Context, Update, Select } from "./Context";
 import { createConsumer } from "./Consumer";
 import { createProvider } from "./Provider";
 
+export type Select<
+  T extends React.ComponentType<{ children: any }>
+> = T extends React.ComponentType<{
+  children: (selected: infer R) => React.ReactNode;
+}>
+  ? R
+  : never;
+
 export function define<State extends object>() {
   const context = new Context<State>();
   const { Provider, Consumer } = React.createContext<State>(

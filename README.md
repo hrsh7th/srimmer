@@ -7,11 +7,25 @@ inspired `react-copy-write`.
 # API
 
 ```typescript
-import { define } from 'srimmer';
+import { define, Select } from 'srimmer';
 
+/**
+ * Extract consumer's selected state. `Select<typeof Consumer>`
+ */
+export { Select };
+
+/**
+ * Your state.
+ */
 type State = { ... };
 
-const {
+/**
+ * Define some state utilities from your state type.
+ */
+
+const defined = define<State>();
+
+export const {
 
   /**
    * State provider.
@@ -27,7 +41,7 @@ const {
 
   /**
    * State selector.
-   * @type {(select: <T>(state: State) => T) => Consumer<T>}
+   * @type {<T>(select: (state: State) => T) => Consumer<T>}
    */
   select,
 
@@ -38,15 +52,15 @@ const {
    */
   get
 
-} = define<State>();
+} = defined;
 ```
 
-# Usage
+# Real World Usage
 
-## define your state
+## define your state (src/state/index.ts)
 
 ```typescript
-import { define } from 'srimmer';
+import { define, Select } from 'srimmer';
 
 export type State = { ... };
 
@@ -56,9 +70,11 @@ export const {
   update,
   get
 } = define<State>();
+
+export { Select };
 ```
 
-## bootstrap
+## bootstrap (src/index.tsx)
 
 ```typescript
 import React from "react";
@@ -77,10 +93,10 @@ function createInitialState() {
 }
 ```
 
-## consume state with selecter everywhere
+## consume state (src/component/\*_/_.tsx)
 
 ```typescript
-import { select, update } from './state';
+import { select, update, Select } from './state';
 
 const Consumer = select(state => ({
   todos: state.todos
@@ -89,18 +105,22 @@ const Consumer = select(state => ({
 export default () => (
   <Consumer>
     {state => (
-      <button onClick={onAddButtonClick}>add</button>
-      {state.todos.map(todo => (
-        <div key={todo.id}>{todo.name} - {todo.status}</div>
-      ))}
+      <button onClick={() => onAddButtonClick(state)}>add</button>
+      <div>{todos(state)}</div>
     )}
   </Consumer>
 );
 
+const todos = (state: Select<typeof Consumer>) => {
+  return state.todos.map(todo => (
+    <div key={todo.id}>{todo.name} - {todo.status}</div>
+  ));
+}
+
 const onAddButtonClick = () => {
   update(state => {
     state.todos.push({
-      name: 'new todo',
+      name: `new todo ${state.todos.length}`,
       status: 'todo'
     });
   });
