@@ -36,7 +36,7 @@ export function createConsumer<State>(
      */
     public select = (state: State) => {
       const bitState = context.getBitState(this.props.select);
-      bitState.state = bitState.state || this.props.select(state);
+      bitState.state = bitState.state || this.props.select(state); // invoke select for initial rendering if needed.
       return (
         <Versioning version={bitState.version}>
           {() => this.props.children(bitState.state)}
