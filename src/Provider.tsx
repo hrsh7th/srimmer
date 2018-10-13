@@ -1,6 +1,5 @@
 import React from "react";
-import { produce } from "immer";
-import { Context, Update } from "./Context";
+import { Context } from "./Context";
 
 export type ProviderProps<State> = {
   state: State;
@@ -28,8 +27,8 @@ export function createProvider<State>(
     public constructor(props: ProviderProps<State>) {
       super(props);
       this.state = { state: props.state };
-      context.getState = this.getState;
-      context.updateState = this.updateState;
+      context.setState(props.state);
+      context.listen(state => this.setState({ state }));
     }
 
     /**
@@ -40,23 +39,5 @@ export function createProvider<State>(
         <Provider value={this.state.state}>{this.props.children}</Provider>
       );
     }
-
-    /**
-     * state getter.
-     */
-    public getState = () => {
-      return this.state.state;
-    };
-
-    /**
-     * state updator.
-     */
-    public updateState = (update: Update<State>) => {
-      this.setState({
-        state: produce<State>(this.state.state, function(state) {
-          update(state as State);
-        })
-      });
-    };
   };
 }

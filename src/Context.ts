@@ -1,9 +1,5 @@
-import * as equals from "shallowequal";
-
-/**
- * Mutate function.
- */
-export type Update<State> = (state: State) => void;
+import produce from "immer";
+import equals from "shallowequal";
 
 /**
  * Select function.
@@ -11,12 +7,11 @@ export type Update<State> = (state: State) => void;
 export type Select<State, T = any> = (state: State) => T;
 
 /**
- * bit's state.
+ * select's state.
  */
-export type BitState = {
-  bit: number;
+export type SelectState = {
+  state: any;
   version: number;
-  state?: any;
 };
 
 /**
@@ -24,53 +19,74 @@ export type BitState = {
  */
 export class Context<State> {
   /**
-   * get state function(Provider#getState).
+   * current state.
    */
-  public getState?: () => State;
+  private state?: State;
 
   /**
-   * update state function(Provider#updateState).
+   * listeners.
    */
-  public updateState?: (update: Update<State>) => void;
+  private changed = (_: State) => {};
 
   /**
-   * Consumer's select props as bitmask.
+   * Consumer's select props.
    */
-  private bitmask: Map<Select<State>, BitState> = new Map();
+  private selects: Map<Select<State>, SelectState> = new Map();
 
   /**
-   * calculate bitmask.
+   * set state.
    */
-  public calculateBitmask(nextState: State) {
-    return Array.from(this.bitmask.entries()).reduce(
-      (bits, [select, bitState]) => {
-        const next = select(nextState);
-        const isSame = equals.default(next, bitState.state);
-        if (!isSame) {
-          bitState.state = next;
-          bitState.version++;
-          return bits | bitState.bit;
-        }
-        return bits;
-      },
-      0
-    );
+  public setState = (state: State) => {
+    this.state = state;
+  };
+
+  /**
+   * get state.
+   */
+  public getState = () => {
+    return this.state;
+  };
+
+  /**
+   * update state.
+   */
+  public updateState = (update: (state: State) => void) => {
+    this.state = produce(this.state, state => {
+      update(state as State);
+    });
+
+    Array.from(this.selects.entries()).forEach(([select, state]) => {
+      const next = select(this.state!);
+      if (!equals(next, state.state)) {
+        state.state = next;
+        state.version++;
+      }
+    });
+
+    this.changed(this.state!);
+  };
+
+  /**
+   * listen state change.
+   */
+  public listen(changed: (state: State) => void) {
+    this.changed = changed;
   }
 
   /**
    * register select function.
    */
   public register(select: Select<State>) {
-    this.bitmask.set(select, {
-      bit: this.bitmask.size + 1,
+    this.selects.set(select, {
+      state: select(this.state!),
       version: 1
     });
   }
 
   /**
-   * getBitState.
+   * getSelectState.
    */
-  public getBitState(select: (state: State) => any) {
-    return this.bitmask.get(select)!;
+  public getSelectState(select: Select<State>) {
+    return this.selects.get(select)!;
   }
 }

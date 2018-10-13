@@ -16,6 +16,10 @@ export function createConsumer<State>(
   return class SrimmerConsumer<T> extends React.Component<
     ConsumerProps<State, T>
   > {
+    public shouldComponentUpdate() {
+      return false;
+    }
+
     /**
      * initialize bitmask.
      */
@@ -28,21 +32,19 @@ export function createConsumer<State>(
      * rednder.
      */
     public render() {
-      return <Consumer>{this.select}</Consumer>;
-    }
-
-    /**
-     * select and versioning.
-     */
-    public select = (state: State) => {
-      const bitState = context.getBitState(this.props.select);
-      bitState.state = bitState.state || this.props.select(state); // invoke select for initial rendering if needed.
       return (
-        <Versioning version={bitState.version}>
-          {() => this.props.children(bitState.state)}
-        </Versioning>
+        <Consumer>
+          {_ => {
+            const state = context.getSelectState(this.props.select);
+            return (
+              <Versioning version={state.version}>
+                {() => this.props.children(state.state)}
+              </Versioning>
+            );
+          }}
+        </Consumer>
       );
-    };
+    }
   };
 }
 

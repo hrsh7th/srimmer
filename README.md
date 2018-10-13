@@ -7,7 +7,7 @@ inspired `react-copy-write`.
 # API
 
 ```typescript
-import { define, Select } from 'srimmer';
+import { define, Select } from "srimmer";
 
 /**
  * Extract consumer's selected state. `Select<typeof Consumer>`
@@ -17,16 +17,19 @@ export { Select };
 /**
  * Your state.
  */
-type State = { ... };
+type State = {
+  todos: {
+    name: string;
+    status: string;
+  }[];
+};
 
 /**
  * Define some state utilities from your state type.
  */
-
 const defined = define<State>();
 
 export const {
-
   /**
    * State provider.
    * @type {React.ComponentType<{ state: State; }>}
@@ -34,8 +37,8 @@ export const {
   Provider,
 
   /**
-   * State updator.
-   * @type {(updator: (state: State) => void) => void}
+   * State updater.
+   * @type {(updater: (state: State) => void) => void}
    */
   update,
 
@@ -50,8 +53,14 @@ export const {
    * Note: Carefully. It makes implicit depends to state values.
    * @type {() => State}
    */
-  get
+  get,
 
+  /**
+   * State setter.
+   * Note: For testing.
+   * @type {(state: State) => void}
+   */
+  set
 } = defined;
 ```
 
@@ -68,10 +77,26 @@ export const {
   Provider,
   select,
   update,
-  get
+  get,
+  set
 } = define<State>();
 
 export { Select };
+```
+
+## define your action (src/action/index.ts)
+
+```typescript
+import { update } from "../../state";
+
+export const addNewTask = () => {
+  update(state => {
+    state.todos.push({
+      name: `new todo ${state.todos.length}`,
+      status: "todo"
+    });
+  });
+};
 ```
 
 ## bootstrap (src/index.tsx)
@@ -96,7 +121,8 @@ function createInitialState() {
 ## consume state (src/component/\*_/_.tsx)
 
 ```typescript
-import { select, update, Select } from './state';
+import { select, Select } from '../../state';
+import { addNewTask } from '../action';
 
 const Consumer = select(state => ({
   todos: state.todos
@@ -118,13 +144,26 @@ const todos = (state: Select<typeof Consumer>) => {
 }
 
 const onAddButtonClick = () => {
-  update(state => {
-    state.todos.push({
-      name: `new todo ${state.todos.length}`,
-      status: 'todo'
-    });
-  });
+  addNewTask();
 };
+```
+
+## testing your updater (test/action/index.test.ts)
+
+```typescript
+import diff from 'snapshot-diff'; # https://github.com/jest-community/snapshot-diff
+import { set, get } from '../../../src/state';
+import { addNewTask } from '../../../src/action';
+
+beforeEach(() => {
+  set({ ...fixture });
+});
+
+test('addNewTask', () => {
+  const state = get()!;
+  addNewTask();
+  expect(diff(state, get()!)).toMatchSnapshot();
+});
 ```
 
 # Recommended Structure

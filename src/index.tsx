@@ -1,5 +1,5 @@
 import React from "react";
-import { Context, Update, Select } from "./Context";
+import { Context, Select } from "./Context";
 import { createConsumer } from "./Consumer";
 import { createProvider } from "./Provider";
 
@@ -13,30 +13,20 @@ export type Select<
 
 export function define<State extends object>() {
   const context = new Context<State>();
-  const { Provider, Consumer } = React.createContext<State>(
-    {} as any,
-    (_, next) => context.calculateBitmask(next)
-  );
+  const { Provider, Consumer } = React.createContext<State>({} as any);
   const SrimmerProvider = createProvider<State>(Provider, context);
   const SrimmerConsumer = createConsumer<State>(Consumer, context);
 
   return {
     Provider: SrimmerProvider,
-
     Consumer: SrimmerConsumer,
-
-    get: () => {
-      return context.getState && context.getState();
-    },
-
+    get: context.getState,
+    set: context.setState,
+    update: context.updateState,
     select: function select<T>(select: Select<State, T>) {
       return (props: { children: (s: T) => React.ReactNode }) => (
         <SrimmerConsumer<T> select={select}>{props.children}</SrimmerConsumer>
       );
-    },
-
-    update: (update: Update<State>) => {
-      context.updateState && context.updateState(update);
     }
   };
 }
