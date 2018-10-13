@@ -1,7 +1,7 @@
 {
   "name": "srimmer",
   "version": "0.3.0",
-  "description": "immer react bindings.",
+  "description": "Simple seact state management library. powered by immer.",
   "main": "lib/cjs/index.js",
   "module": "lib/esm/index.js",
   "types": "lib/esm/index.d.ts",
