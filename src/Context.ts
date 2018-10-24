@@ -24,6 +24,11 @@ export class Context<State> {
   private state?: State;
 
   /**
+   * current draft state.
+   */
+  private draft?: State;
+
+  /**
    * listeners.
    */
   private changed = (_: State) => {};
@@ -51,8 +56,15 @@ export class Context<State> {
    * update state.
    */
   public updateState = (update: (state: State) => void) => {
+    if (this.draft) {
+      update(this.draft);
+      return;
+    }
+
     this.state = produce(this.state, state => {
+      this.draft = state as State;
       update(state as State);
+      this.draft = undefined;
     });
 
     Array.from(this.selects.entries()).forEach(([select, state]) => {
