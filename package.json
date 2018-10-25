@@ -1,6 +1,6 @@
 {
   "name": "srimmer",
-  "version": "0.5.0",
+  "version": "0.6.0",
   "description": "Simple seact state management library. powered by immer.",
   "main": "lib/cjs/index.js",
   "module": "lib/esm/index.js",
