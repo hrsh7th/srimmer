@@ -1,0 +1,50 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`apply patches 1`] = `
+Object {
+  "option": Object {
+    "name": "option name",
+  },
+  "tasks": Array [
+    Object {
+      "id": 2,
+      "name": "task2",
+      "status": Object {
+        "done": false,
+      },
+    },
+  ],
+}
+`;
+
+exports[`apply patches 2`] = `
+Object {
+  "option": Object {
+    "name": "option name",
+  },
+  "tasks": Array [
+    Object {
+      "id": 1,
+      "name": "task1",
+      "status": Object {
+        "done": true,
+      },
+    },
+    Object {
+      "id": 2,
+      "name": "task2",
+      "status": Object {
+        "done": false,
+      },
+    },
+    Object {
+      "id": 3,
+      "name": "task1-1",
+      "parentId": 1,
+      "status": Object {
+        "done": false,
+      },
+    },
+  ],
+}
+`;

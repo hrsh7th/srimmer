@@ -1,4 +1,4 @@
-import produce, { PatchListener } from "immer";
+import produce, { applyPatches, Patch, PatchListener } from "immer";
 import equals from "shallowequal";
 
 /**
@@ -101,6 +101,15 @@ export class Context<State> {
     if (changed) {
       this.changed.forEach(changed => changed(this.state!));
     }
+  };
+
+  /**
+   * apply patches.
+   */
+  public applyPatches = (patches: Patch[]) => {
+    this.updateState(state => {
+      applyPatches(state, patches);
+    });
   };
 
   /**
