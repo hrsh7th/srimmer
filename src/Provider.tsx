@@ -28,7 +28,7 @@ export function createProvider<State>(
       super(props);
       this.state = { state: props.state };
       context.setState(props.state);
-      context.listen(state => this.setState({ state }));
+      context.subscribe(state => this.setState({ state }));
     }
 
     /**

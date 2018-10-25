@@ -1,4 +1,4 @@
-import produce from "immer";
+import produce, { PatchListener } from "immer";
 import equals from "shallowequal";
 
 /**
@@ -15,9 +15,19 @@ export type SelectState = {
 };
 
 /**
+ * Changed listener.
+ */
+export type ChangedListener<State> = (state: State) => void;
+
+/**
  * Context.
  */
 export class Context<State> {
+  /**
+   * patche listener.
+   */
+  public patchListener?: PatchListener;
+
   /**
    * current state.
    */
@@ -31,7 +41,7 @@ export class Context<State> {
   /**
    * listeners.
    */
-  private changed = (_: State) => {};
+  private changed: ChangedListener<State>[] = [];
 
   /**
    * Consumer's select props.
@@ -56,33 +66,58 @@ export class Context<State> {
    * update state.
    */
   public updateState = (update: (state: State) => void) => {
+    // avoid produce when recursive call.
     if (this.draft) {
       update(this.draft);
       return;
     }
 
-    this.state = produce(this.state, state => {
-      this.draft = state as State;
-      update(state as State);
-      this.draft = undefined;
-    });
+    // produce.
+    this.state = produce(
+      this.state,
+      state => {
+        this.draft = state as State;
+        update(state as State);
+        this.draft = undefined;
+      },
+      this.patchListener
+    );
 
-    Array.from(this.selects.entries()).forEach(([select, state]) => {
-      const next = select(this.state!);
-      if (!equals(next, state.state)) {
-        state.state = next;
-        state.version++;
-      }
-    });
+    // calculate changes selector.
+    const changed = Array.from(this.selects.entries()).reduce(
+      (changed, [select, info]) => {
+        const next = select(this.state!);
+        if (!equals(next, info.state)) {
+          info.state = next;
+          info.version++;
+          return true;
+        }
+        return changed;
+      },
+      false
+    );
 
-    this.changed(this.state!);
+    // notify if state changes.
+    if (changed) {
+      this.changed.forEach(changed => changed(this.state!));
+    }
   };
 
   /**
-   * listen state change.
+   * subscribe state change.
    */
-  public listen(changed: (state: State) => void) {
-    this.changed = changed;
+  public subscribe(changed: ChangedListener<State>) {
+    this.changed.push(changed);
+  }
+
+  /**
+   * unsubscribe state change.
+   */
+  public unsubscribe(changed: ChangedListener<State>) {
+    const idx = this.changed.indexOf(changed);
+    if (idx > -1) {
+      this.changed.splice(idx, 1);
+    }
   }
 
   /**

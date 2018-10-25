@@ -43,6 +43,12 @@ export const {
   update,
 
   /**
+   * immer's patchListener.
+   * @type {(patchListener: PatchListener) => void}
+   */
+  patches,
+
+  /**
    * State selector.
    * @type {<T>(select: (state: State) => T) => Consumer<T>}
    */
@@ -77,6 +83,7 @@ export const {
   Provider,
   select,
   update,
+  patches,
   get,
   set
 } = define<State>();

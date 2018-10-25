@@ -3,11 +3,11 @@
 exports[`Should re-rendering only part of consumers if nested. 1`] = `
 Array [
   <div>
-    1
+    modified task1
     1
   </div>,
   <div>
-    0
+    option name
     0
   </div>,
 ]
@@ -16,11 +16,11 @@ Array [
 exports[`Should re-rendering only part of consumers if nested. 2`] = `
 Array [
   <div>
-    1
+    modified task1
     1
   </div>,
   <div>
-    1
+    modified option name
     1
   </div>,
 ]
@@ -29,11 +29,11 @@ Array [
 exports[`Should re-rendering only part of consumers. 1`] = `
 Array [
   <div>
-    1
+    modified task1
     1
   </div>,
   <div>
-    0
+    option name
     0
   </div>,
 ]
@@ -42,11 +42,11 @@ Array [
 exports[`Should re-rendering only part of consumers. 2`] = `
 Array [
   <div>
-    1
+    modified task1
     1
   </div>,
   <div>
-    1
+    modified option name
     1
   </div>,
 ]
